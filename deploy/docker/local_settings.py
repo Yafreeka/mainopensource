@@ -32,3 +32,16 @@ CELERY_RESULT_BACKEND = BROKER_URL
 MP4HLS_COMMAND = "/home/mediacms.io/bento4/bin/mp4hls"
 
 DEBUG = False
+
+USE_S3_FOR_MEDIA_STORAGE = True
+AWS_ACCESS_KEY = 'x'
+AWS_SECRET_KEY = 'Y'
+S3_BUCKET_NAME = 'Z'
+
+
+# S3 work plan
+# 1. Enter settings that you're using S3 OK
+# 2. Enter a migration remote_urls on Media/Encode OK
+# 3. add task that puts content to S3, removes local file, sets remote_urls
+# 4. API response for orig/encod/hls from S3 --> plays??
+# 5. script to migrate existing to S3

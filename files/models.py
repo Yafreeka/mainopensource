@@ -284,6 +284,8 @@ class Media(models.Model):
     video_height = models.IntegerField(default=1)
 
     views = models.IntegerField(db_index=True, default=1)
+    # this will keep any cloud url info, as original_file, probably hls files, encoding files etc
+    remote_urls = models.JSONField(default=dict, help_text='This will keep any url')
 
     # keep track if media file has changed, on saves
     __original_media_file = None
@@ -691,7 +693,11 @@ class Media(models.Model):
 
         ep = {}
         ep["title"] = encoding.profile.name
-        ep["url"] = encoding.media_encoding_url
+        if encoding.remote_urls and encoding.remote_urls.get('media_encoding_url'):
+            url = encoding.remote_urls.get('media_encoding_url')
+        else:
+            url = encoding.media_encoding_url
+        ep["url"] = url
         ep["progress"] = encoding.progress
         ep["size"] = encoding.size
         ep["encoding_id"] = encoding.id
@@ -731,10 +737,14 @@ class Media(models.Model):
     def original_media_url(self):
         """Property used on serializers"""
 
-        if settings.SHOW_ORIGINAL_MEDIA:
-            return helpers.url_from_path(self.media_file.path)
-        else:
+        if not settings.SHOW_ORIGINAL_MEDIA:
             return None
+
+        if self.remote_urls and self.remote_urls.get('original_media_url'):
+            url = self.remote_urls.get('original_media_url')
+        else:
+            url = helpers.url_from_path(self.media_file.path)
+        return url
 
     @property
     def thumbnail_url(self):
@@ -1076,6 +1086,9 @@ class Encoding(models.Model):
     total_run_time = models.IntegerField(default=0)
 
     worker = models.CharField(max_length=100, blank=True)
+
+    # this will keep any cloud url info, as original_file, probably hls files, encoding files etc
+    remote_urls = models.JSONField(default=dict, help_text='This will keep any url')
 
     @property
     def media_encoding_url(self):
