@@ -1,6 +1,7 @@
 import os
 
 from celery.schedules import crontab
+from django.utils.translation import ugettext_lazy as _
 
 DEBUG = False
 
@@ -304,6 +305,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -485,3 +487,10 @@ if GLOBAL_LOGIN_REQUIRED:
         r'/accounts/confirm-email/.*/$',
         r'/api/v[0-9]+/',
     ]
+
+LANGUAGES = [
+    ("de", _("German")),
+    ("en", _("English")),
+    ('fr', _('French')),
+    ('el', _('Greek')),
+]
